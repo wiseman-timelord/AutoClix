@@ -1,5 +1,7 @@
 # AutoClix
+Status: Working.
 
+## Description
 AutoClix is a Windows-only auto-clicker script designed to perform automated mouse clicks at random intervals within a specified timer range. It's built with user-friendliness in mind, offering both command-line execution and clickable batch files for installation and running. Sound notifications, progress bars, and configuration persistence are some of the refinements that enhance the user experience.
 
 ## Features
