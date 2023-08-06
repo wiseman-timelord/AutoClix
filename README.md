@@ -21,14 +21,15 @@ AutoClix is a Windows-only auto-clicker script designed to perform automated mou
 3. Run the script by executing "python autoclix.py" or clicking "AutoClix.bat".
 4. Press 'Ctrl + Shift + F12' to activate or deactivate the auto-click functionality.
 5. When activated, you will be prompted to enter the timer range in minutes if not previously set.
-6. The script will automatically click at random intervals within the specified timer range.
-7. Press the 'Esc' key to stop the script, or terminate by sending a KeyboardInterrupt (e.g., 'Ctrl + C').
+6. The script will then automatically click at random intervals within the specified timer range.
+7. Press the 'Esc' key to stop the script, or terminate it by sending a KeyboardInterrupt in the terminal.
 
 ## Requirements
 
-- Windows 2008 R2, 2012, 8.1, 10 (Powershell)
-- Administrative rights.
+- Windows OS
+- Python 3.10
+- Required dependencies in `requirements.txt`
 
 ## Disclaimer
 
-Use this script responsibly, and only where automated clicking is permitted. Misuse may violate terms of service on some platforms or applications. AutoClix is designed for convenience and efficiency, but users should be aware of the rules and regulations of the platforms they are using it on. Use at your own discretion and risk.
+Use AutoClix responsibly, and only where automated clicking is permitted. Misuse may violate terms of service on some platforms or applications. Windows-only compatibility is intentional, and the script plays the default Windows sound when activated or deactivated.
