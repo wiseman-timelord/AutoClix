@@ -28,7 +28,6 @@ AutoClix is a Windows-only auto-clicker script designed to perform automated mou
 
 - Windows OS
 - Python 3.10
-- Required dependencies in `requirements.txt`
 
 ## Disclaimer
 
