@@ -1,7 +1,6 @@
 @echo off
 mode 65,25
 echo.
-echo.
 
 
 :: Graphic Text
@@ -14,14 +13,14 @@ echo "        \/                           \/              \/"
 echo.
 echo.
 timeout /t 2 >nul 
-echo.
-echo.
+
 
 :: Run Program.
 @echo on
 python.exe autoclix.py
 echo.
 echo.
+
 
 :: Program Exit
 timeout /t 2 >nul  
