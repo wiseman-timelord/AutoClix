@@ -14,6 +14,27 @@ AutoClix is a Windows-only auto-clicker script designed to perform automated mou
 5. **Configuration Persistence:** Timer range settings are saved in a 'config.yaml' file for future use.
 6. **Windows Compatibility:** Designed specifically for Windows users.
 
+### 
+Output is like this...
+```
+
+"   _____          __         _________ .__  .__        "
+"  /  _  \  __ ___/  |_  ____ \_   ___ \|  | |__|__  ___"
+" /  /_\  \|  |  \   __\/  _ \/    \  \/|  | |  \  \/  /"
+"/    |    \  |  /|  | (  <_> )     \___|  |_|  |>    < "
+"\____|__  /____/ |__|  \____/ \______  /____/__/__/\_ \"
+"        \/                           \/              \/"
+
+
+D:\AutoClix>python.exe autoclix.py
+Press Ctrl + Shift + F12 to activate/deactivate.
+Auto-click activated.
+Enter range in minutes (e.g., 1 4) (Previous: 1 to 3): 1 3
+Time left: 100%|############| 88/88 [01:28<00:00,  1.01s/it]
+Time left:   1%|1           | 1/106 [00:01<01:46,  1.01s/it]
+
+```
+
 ## Usage
 
 1. Ensure you have Python installed on your system (tested on 3.10).
