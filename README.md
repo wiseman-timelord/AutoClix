@@ -49,7 +49,7 @@ Time left:   1%|1           | 1/106 [00:01<01:46,  1.01s/it]
 
 ## Requirements
 
-- Windows OS (soft requirement)
+- Windows (soft requirement)
 - Python 2.00-3.11
 
 ## Disclaimer
