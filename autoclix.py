@@ -32,7 +32,7 @@ def get_timer_range():
 
     while True:
         try:
-            user_input = input(f"Enter timer range in minutes (e.g., 1 4){prev_str}: ")
+            user_input = input(f"Enter range in minutes (e.g., 1 4){prev_str}: ")
             if not user_input and prev_settings:
                 return prev_settings
             else:
@@ -42,7 +42,7 @@ def get_timer_range():
                     write_config(config)
                     return timer_range
                 else:
-                    raise ValueError("Invalid input. Please enter two numbers separated by a space (e.g., 1 4).")
+                    raise ValueError("Invalid input. Two numbers separated by space (e.g., 1 4).")
         except ValueError as e:
             print(str(e))
 
@@ -52,7 +52,7 @@ def auto_click(min_time, max_time):
         if not active:
             break
         wait_time = random.randint(min_time * 60, max_time * 60)  # Random wait time in seconds
-        for t in tqdm(range(wait_time, 0, -1), desc="Time left", ncols=80, ascii=True):
+        for t in tqdm(range(wait_time, 0, -1), desc="Time left", ncols=60, ascii=True):
             if not active:
                 break
             time.sleep(1)
@@ -76,7 +76,7 @@ active = False
 keyboard.add_hotkey('ctrl+shift+f12', toggle_auto_click)
 
 try:
-    print("Press Ctrl + Shift + F12 to activate/deactivate auto-click.")
+    print("Press Ctrl + Shift + F12 to activate/deactivate.")
     keyboard.wait('esc')  # Wait until 'Esc' key is pressed to stop the script
 except KeyboardInterrupt:
     pass
