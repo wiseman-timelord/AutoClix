@@ -39,13 +39,12 @@ Time left:   1%|1           | 1/106 [00:01<01:46,  1.01s/it]
 
 ## Usage
 
-1. Ensure you have Python installed on your system (tested on 3.10).
-2. Install the required dependencies by running "pip install -r requirements.txt" or clicking on "Install.bat".
-3. Run the script by executing "python autoclix.py" or clicking "AutoClix.bat".
-4. Press 'Ctrl + Shift + F12' to activate or deactivate the auto-click functionality.
-5. When activated, you will be prompted to enter the timer range in minutes if not previously set.
-6. The script will then automatically click at random intervals within the specified timer range.
-7. Press the 'Esc' key to stop the script, or terminate it by sending a KeyboardInterrupt in the terminal.
+1. Install the required dependencies by running "pip install -r requirements.txt" or clicking on "Install.bat".
+2. Run the script by executing "python autoclix.py" or clicking "AutoClix.bat".
+3. Press 'Ctrl + Shift + F12' to activate or deactivate the auto-click functionality.
+4. When activated, you will be prompted to enter the timer range in minutes if not previously set.
+5. The script will then automatically click at random intervals within the specified timer range.
+6. Press the 'Esc' key to stop the script, or terminate it by sending a KeyboardInterrupt in the terminal.
 
 ## Requirements
 
