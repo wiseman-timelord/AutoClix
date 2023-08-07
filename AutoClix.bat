@@ -1,5 +1,5 @@
 @echo off
-mode 80,30
+mode 65,25
 echo.
 echo.
 

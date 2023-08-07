@@ -26,13 +26,13 @@ def get_timer_range():
     prev_settings = config.get('timer_range', None)
 
     if prev_settings:
-        prev_str = f" (Previous: {prev_settings[0]} to {prev_settings[1]} minutes)"
+        prev_str = f" (Previous: {prev_settings[0]} to {prev_settings[1]})"
     else:
         prev_str = ""
 
     while True:
         try:
-            user_input = input(f"Enter the timer range in minutes (e.g., 1 4){prev_str}: ")
+            user_input = input(f"Enter timer range in minutes (e.g., 1 4){prev_str}: ")
             if not user_input and prev_settings:
                 return prev_settings
             else:
