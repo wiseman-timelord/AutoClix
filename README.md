@@ -1,17 +1,16 @@
 # AutoClix
-Status: Working.
+Status: Currently being, converted to Powershell and upgraded.
 
 ## Description
 
-AutoClix is a python based auto-clicker script designed to perform automated mouse clicks at random intervals within a specified timer range. It's built with user-friendliness in mind, offering both command-line execution and clickable batch files for installation and running. Sound notifications, progress bars, and configuration persistence are some of the refinements that enhance the user experience. Additionally, the app has some additional enhancements for windows users through the batch file.
+AutoClix is a Powershell based auto-clicker script designed to perform automated mouse clicks, 1 per second or at random intervals of seconds within a specified timer ranges in minutes. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features Sound notifications, progress bars, configuration persistence, and cursor controlled menus. 
 
 ## Features
 
 1. **Randomized Clicking:** Performs mouse clicks at random intervals within a user-defined range.
-2. **Easy Activation:** Toggle the auto-click functionality on and off with a simple keyboard shortcut.
-3. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
-4. **Sound Notifications:** Hear a default Windows sound when activating or deactivating the auto-click.
-5. **Configuration Persistence:** Timer range settings are saved in a 'config.yaml' file for future use.
+2. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
+3. **Sound Notifications:** Hear a default Windows sound when activating or deactivating the auto-click.
+4. **Configuration Persistence:** Timer range settings are saved in a 'settings.cfg' file for future use.
 6. **Windows Compatibility:** Designed specifically for Windows users.
 
 ## Interface
@@ -20,36 +19,29 @@ Output is like this...
 
 ```
 
-"   _____          __         _________ .__  .__        "
-"  /  _  \  __ ___/  |_  ____ \_   ___ \|  | |__|__  ___"
-" /  /_\  \|  |  \   __\/  _ \/    \  \/|  | |  \  \/  /"
-"/    |    \  |  /|  | (  <_> )     \___|  |_|  |>    < "
-"\____|__  /____/ |__|  \____/ \______  /____/__/__/\_ \"
-"        \/                           \/              \/"
+
+                    Screensaver Preventer
+
+                     Every Second <-
+                     Enter Timings
+                     Use Last (1 2)
+                     Quit Program
 
 
-D:\AutoClix>python.exe autoclix.py
-Press Ctrl + Shift + F12 to activate/deactivate.
-Auto-click activated.
-Enter range in minutes (e.g., 1 4) (Previous: 1 to 3): 1 3
-Time left: 100%|############| 88/88 [01:28<00:00,  1.01s/it]
-Time left:   1%|1           | 1/106 [00:01<01:46,  1.01s/it]
 
 ```
 
 ## Usage
 
-1. Install the required dependencies by running "pip install -r requirements.txt" or clicking on "Install.bat".
-2. Run the script by executing "python autoclix.py" or clicking "AutoClix.bat".
-3. Press 'Ctrl + Shift + F12' to activate or deactivate the auto-click functionality.
+1. Run the script by clicking "AutoClix.bat".
+3. Select, .
 4. When activated, you will be prompted to enter the timer range in minutes if not previously set.
 5. The script will then automatically click at random intervals within the specified timer range.
 6. Press the 'Esc' key to stop the script, or terminate it by sending a KeyboardInterrupt in the terminal.
 
 ## Requirements
 
-- Windows (soft requirement)
-- Python 2.00-3.11
+- Windows 7-11
 
 ## Disclaimer
 
