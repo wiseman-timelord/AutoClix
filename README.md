@@ -15,23 +15,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 6. **Windows Compatibility:** Designed specifically for Windows users.
 
 ## Interface
-```
 
- Progress
-    Elapsed: 00:08 / Remaining: 02:34 (Esc key for Menu)
-    [oooo                                                 ]                                                                       
-
-
-
-
-
-
-
-
-
-
-
-```
 ```
 
 
@@ -55,16 +39,11 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 ```
 ```
 
+ Progress
+    Elapsed: 00:08 / Remaining: 02:34 (Esc key for Menu)
+    [oooo                                                 ]                                                                       
 
 
-
-
-
-                          Timer Options
-
-                      Toggle Sounds (On) <-
-                        Change Timer (1 3)
-                          Back To Main
 
 
 
