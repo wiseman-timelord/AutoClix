@@ -32,6 +32,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 
 ```
+```
 
 
 
