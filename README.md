@@ -74,6 +74,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 
 ```
+
 ## Usage
 
 1. Run the script by clicking "AutoClix.bat".
