@@ -160,6 +160,14 @@ function Click-EverySecond {
     $clickCount = 0
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     Clear-Host
+    $countdown = 5
+    while ($countdown -gt 0) {
+        $padding = " " * ((65 - "Auto-clicking begins in $countdown seconds...".Length) / 2)
+        Write-Host "${padding}Autoclicking begins in $countdown seconds..."
+        Start-Sleep -Seconds 1
+        Clear-Host
+        $countdown--
+    }
     while ($true) {
         ClickMouse
         $clickCount++
