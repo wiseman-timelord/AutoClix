@@ -1,5 +1,5 @@
 # AutoClix
-Status: Currently being converted to Powershell and upgraded with new features.
+Status: Working.
 
 ## Description
 
