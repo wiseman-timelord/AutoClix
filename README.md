@@ -3,7 +3,7 @@ Status: Working.
 
 ## Description
 
-AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks, either 1 per second or at random intervals within specified timer ranges in minutes. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features sound notifications, progress bars, configuration persistence, centrally aligned cursor-controlled menus, and more.
+AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks, either 1 per second or at random intervals in seconds within specified timer ranges in minutes. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features sound notifications, progress bars, configuration persistence, centrally aligned cursor-controlled menus, and more.
 
 ## Features
 
