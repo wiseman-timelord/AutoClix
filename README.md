@@ -14,6 +14,66 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 5. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
 6. **Windows Compatibility:** Designed specifically for Windows users.
 
+## Interface
+```
+
+ Progress
+    Elapsed: 00:08 / Remaining: 02:34 (Esc key for Menu)
+    [oooo                                                 ]                                                                       
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+                            AutoClix
+
+                         Every Second <-
+                        Set Period (1 3)
+                          Timer Options
+                          Quit Program
+
+
+
+
+
+
+
+```
+```
+
+
+
+
+
+
+                          Timer Options
+
+                      Toggle Sounds (On) <-
+                        Change Timer (1 3)
+                          Back To Main
+
+
+
+
+
+
+
+
+
+```
 ## Usage
 
 1. Run the script by clicking "AutoClix.bat".
