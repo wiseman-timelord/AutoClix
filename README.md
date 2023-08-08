@@ -72,4 +72,4 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 ## Disclaimer
 
-Use AutoClix responsibly, and only where automated clicking is permitted. Misuse may violate terms of service on some platforms or applications. Windows-only compatibility is intentional, and the script plays the default Windows sound when activated or deactivated. The central alignment of menus enhances the user experience.
+Use AutoClix responsibly, and only where automated clicking is permitted. Misuse may violate terms of service on some platforms or applications.
