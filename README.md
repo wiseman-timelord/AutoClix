@@ -13,7 +13,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 4. **Sound Notifications:** Toggleable sound notifications for clicks using provided sound.
 5. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
 6. **Windows Compatibility:** Designed specifically for Windows users.
-7. AutoClix.lnk provided contains required arguements to run "AutoClix.bat" from taskbar. 
+7. "AutoClix.lnk" provided contains required arguements to run "AutoClix.bat" from taskbar, but edit paths. 
 
 ## Interface
 
