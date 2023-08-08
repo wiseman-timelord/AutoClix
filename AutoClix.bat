@@ -1,6 +1,8 @@
+:: Initiation
 @echo off
-mode 65,25
-echo.
+mode 65,20
+Echo.
+Echo.
 
 
 :: Graphic Text
@@ -11,17 +13,18 @@ echo "/    |    \  |  /|  | (  <_> )     \___|  |_|  |>    < "
 echo "\____|__  /____/ |__|  \____/ \______  /____/__/__/\_ \"
 echo "        \/                           \/              \/"
 echo.
+Echo Time to let the computer do the work, while you chillax!
 echo.
 timeout /t 2 >nul 
 
 
-:: Run Program.
+:: Run PowerShell Command
 @echo on
-python.exe autoclix.py
-echo.
-echo.
+powershell -ExecutionPolicy Bypass -File "autoclix.ps1"
+@echo off
+Echo.
+Echo.
 
 
-:: Program Exit
-timeout /t 2 >nul  
+:: Exit Program
 pause
