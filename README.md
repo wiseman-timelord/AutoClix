@@ -72,4 +72,4 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 ## Disclaimer
 
-This software is intended to be used on your own, offline games and computer, or for example to prevent, powersave or screensaver, from becoming active, meaning in other words, use AutoClix responsibly, and only where automated clicking is permitted. Misuse may violate terms of service on some platforms or applications.
+This software is intended to be used on your own, offline games and computer, or for example to prevent, powersave or screensaver, from becoming active, meaning in other words, use AutoClix responsibly, and only where automated clicking is permitted, as misuse may violate terms of service on some platforms or applications.
