@@ -60,9 +60,9 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 ## Usage
 
 1. Run the script by clicking "AutoClix.bat".
-2. Navigate through the centrally aligned menus using the arrow keys.
-3. Select the desired clicking mode or timer options.
-4. The script will then automatically click at the selected intervals within the specified timer range.
+2. Navigate through the menus using the arrow keys.
+3. Select Timer Options to configure.
+4. Select the desired clicking mode.
 5. Press the 'Esc' key to return to menu.
 6. Exit program from main menu.
 
