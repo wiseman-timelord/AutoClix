@@ -73,4 +73,4 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 - Windows 7-11
 
 ### DISCLAIMER
-Read "License.Txt", its, what its there for and why its supplied with the package.
+This software is subject to the terms in License.Txt, covering usage, distribution, and modifications. For full details on your rights and obligations, refer to License.Txt.
