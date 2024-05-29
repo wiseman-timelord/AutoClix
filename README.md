@@ -9,7 +9,8 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 ## Features
 
 1. **Randomized Clicking:** Performs mouse clicks at random intervals within a user-defined range.
-2. **Every Second Clicking:** Option to perform a click every second.
+2. **Every Second Clicking:** Option to perform a click every second, just because.
+3. **Clicking at set period:** For example 5 Minutes for multiple bactesting passes takes ~3 minutes each.
 3. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
 4. **Sound Notifications:** Toggleable sound notifications for clicks using provided sound.
 5. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
@@ -28,7 +29,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
                             AutoClix
 
                          Every Second <-
-                        Set Period (1 3)
+                        Set Period (4 5)
                           Timer Options
                           Quit Program
 
