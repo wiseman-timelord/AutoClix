@@ -58,7 +58,7 @@ function Show-Menu {
 
 function Timer-Options {
     while ($true) {
-        $settings = if (Test-Path "settings.cfg") { Get-Content "settings.cfg" } else { @("Off", "1 2") }
+        $settings = if (Test-Path "settings.cfg") { Get-Content "settings.cfg" } else { @("Off", "5 5") }
         $soundStatus = $settings[0]
         $timings = $settings[1]
         $selectedIndex = 0
@@ -94,8 +94,10 @@ function Timer-Options {
                             $settings | Out-File "settings.cfg" -Force
                         }
                         1 {
-                            Enter-Timings
-                            $timings = (Get-Content "settings.cfg")[1]
+                            $newTimings = Enter-Timings
+                            if ($newTimings) {
+                                $timings = "$($newTimings[0]) $($newTimings[1])"
+                            }
                         }
                         2 { return }
                     }
@@ -106,16 +108,20 @@ function Timer-Options {
 }
 
 function Enter-Timings {
-    Write-Host "Enter two times in minutes separated by space (e.g., 1 3):"
+    Write-Host "Enter one or two times in minutes separated by space (e.g., 5 or 1 3):"
     $timings = Read-Host
-    if ($timings -match '^\d+\s\d+$') { 
+    if ($timings -match '^\d+$') {
+        $settings = Get-Content "settings.cfg"
+        $settings[1] = "$timings $timings"
+        $settings | Out-File "settings.cfg" -Force
+        return @($timings, $timings)
+    } elseif ($timings -match '^\d+\s\d+$') {
         $settings = Get-Content "settings.cfg"
         $settings[1] = $timings
-        $settings | Out-File "settings.cfg" -Force 
+        $settings | Out-File "settings.cfg" -Force
         return $timings.Split(' ')
-    }
-    else { 
-        Write-Host "Invalid input. Enter two numbers separated by space." 
+    } else {
+        Write-Host "Invalid input. Enter one number or two numbers separated by space."
         return $null
     }
 }
@@ -139,11 +145,17 @@ function ClickMouse {
 
 function Start-Timer {
     param ([int]$min, [int]$max)
-    $min = [int]$min * 60
-    $max = [int]$max * 60
+    $minSeconds = [int]$min * 60
+    $maxSeconds = [int]$max * 60
     Clear-Host
     while ($true) {
-        $timer = Get-Random -Minimum $min -Maximum $max
+        # Check if the min and max are the same
+        if ($minSeconds -eq $maxSeconds) {
+            $timer = $minSeconds
+        } else {
+            $timer = Get-Random -Minimum $minSeconds -Maximum $maxSeconds
+        }
+        
         $stopwatch = [system.diagnostics.stopwatch]::StartNew()
         while ($stopwatch.Elapsed.TotalSeconds -lt $timer) {
             $progress = ($stopwatch.Elapsed.TotalSeconds / $timer) * 100
