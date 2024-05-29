@@ -26,7 +26,7 @@ function Set-SoundToggle {
 function Show-Menu {
     param ([string]$soundStatus, [string]$timings)
     Clear-Host
-    $options = @("Every Second", "Set Period ($timings)", "Timer Options", "Quit Program")
+    $options = @("Every Second", "Period ($timings)", "Timer Options", "Quit Program")
     $selectedIndex = 0
 
     while ($true) {
