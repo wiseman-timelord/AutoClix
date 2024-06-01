@@ -18,7 +18,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 7. "AutoClix.lnk" provided contains required arguements to run "AutoClix.bat" from taskbar, but edit paths. 
 
 ## Interface
-
+- The Main Menu...
 ```
 
 
@@ -35,6 +35,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 
 ```
+- Timer Display...
 ```
 
 
@@ -66,8 +67,10 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 ## Requirements
 
-- Windows 7-11
-- Linux Untested
+- Windows 7-11 preferably with the 5.1 
+- PowerShellCore =>7
+
+## Notes
 
 ### DISCLAIMER
 This software is subject to the terms in License.Txt, covering usage, distribution, and modifications. For full details on your rights and obligations, refer to License.Txt.
