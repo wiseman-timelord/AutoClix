@@ -1,6 +1,6 @@
 # AutoClix
 ## Status:
-Working. 
+Broken after issues running while inactive, that have somehow crept in, when this is fixed, there will be a release. 
 
 Recently updated...
 - two values the same number was causing bugs
