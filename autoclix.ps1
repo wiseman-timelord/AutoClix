@@ -1,16 +1,33 @@
 $osVersion = [System.Environment]::OSVersion.Version
 $clickSoundPath = Join-Path $PSScriptRoot "click44.wav"
 
-Add-Type -TypeDefinition @"
-using System.Media;
-"@
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
 
-Add-Type -TypeDefinition @"
-using System; using System.Runtime.InteropServices;
-public class MouseClick {
+public class MouseClicker
+{
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-    public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-    public static void Click() { mouse_event(0x0002, 0, 0, 0, 0); mouse_event(0x0004, 0, 0, 0, 0); }
+    public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, UIntPtr dwExtraInfo);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetCursorPos(int X, int Y);
+
+    const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+    const uint MOUSEEVENTF_LEFTUP = 0x0004;
+
+    public static void Click()
+    {
+        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void ClickAt(int x, int y)
+    {
+        SetCursorPos(x, y);
+        Click();
+    }
 }
 "@
 
@@ -24,39 +41,43 @@ function Set-SoundToggle {
 }
 
 function Show-Menu {
-    param ([string]$soundStatus, [string]$timings)
+    param ([string]$soundStatus, [string]$timings, [string]$location)
     Clear-Host
-    $options = @("Every Second", "Period ($timings)", "Set Location", "Timer Options", "Quit Program")
+    $options = @(
+        "Start Click Every Second",
+        "Start Click Periodically",
+        "Set Click Location ($location)",
+        "Toggle Clicking Sounds ($soundStatus)",
+        "Change Timer Range ($timings)",
+        "Quit/Exit Program"
+    )
     $selectedIndex = 0
 
-    while ($true) {
-        Clear-Host
-        $padding = " " * ((65 - "AutoClix".Length) / 2)
-        Write-Host ""
-        Write-Host ""
-        Write-Host ""
-        Write-Host ""
-        Write-Host ""
-        Write-Host ""
-        Write-Host "${padding}AutoClix"
-        Write-Host ""
-        for ($i = 0; $i -lt $options.Length; $i++) {
-            $text = if ($i -eq $selectedIndex) { $options[$i] + " <-" } else { $options[$i] }
-            $padding = " " * ((65 - $text.Length) / 2)
-            Write-Host "${padding}$text"
-        }
-        Write-Host ""
+    try {
+        while ($true) {
+            Clear-Host
+            $padding = " " * ((65 - "AutoClix".Length) / 2)
+            Write-Host ""
+            Write-Host "${padding}AutoClix"
+            Write-Host ""
+            for ($i = 0; $i -lt $options.Length; $i++) {
+                $text = if ($i -eq $selectedIndex) { $options[$i] + " <-" } else { $options[$i] }
+                $padding = " " * ((65 - $text.Length) / 2)
+                Write-Host "${padding}$text"
+            }
+            Write-Host ""
 
-        $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        switch ($key.VirtualKeyCode) {
-            38 { if ($selectedIndex -gt 0) { $selectedIndex-- } } # Up arrow
-            40 { if ($selectedIndex -lt $options.Length - 1) { $selectedIndex++ } }
-            13 { return $selectedIndex + 1 } # Enter key
+            $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            switch ($key.VirtualKeyCode) {
+                38 { if ($selectedIndex -gt 0) { $selectedIndex-- } } # Up arrow
+                40 { if ($selectedIndex -lt $options.Length - 1) { $selectedIndex++ } }
+                13 { return $selectedIndex + 1 } # Enter key
+            }
         }
+    } catch {
+        Write-Host "An error occurred: $_"
     }
 }
-
-
 
 function Set-Location {
     Add-Type @"
@@ -83,74 +104,27 @@ public class CursorPosition {
 
     $point = [CursorPosition]::GetCursorPosition()
     $location = "$($point.X) $($point.Y)"
-    $location | Out-File -FilePath "location.cfg" -Force
+    $settings = Get-Settings
+    if ($settings.Count -lt 3) {
+        $settings += $location
+    } else {
+        $settings[2] = $location
+    }
+    $settings | Out-File -FilePath "settings.cfg" -Force
     Write-Host "Location set to: $location"
     Start-Sleep -Seconds 2
-}
-
-
-
-function Timer-Options {
-    while ($true) {
-        $settings = if (Test-Path "settings.cfg") { Get-Content "settings.cfg" } else { @("Off", "5 5") }
-        $soundStatus = $settings[0]
-        $timings = $settings[1]
-        $selectedIndex = 0
-
-        while ($true) {
-            $options = @("Toggle Sounds ($soundStatus)", "Change Timer ($timings)", "Back To Main")
-            Clear-Host
-            $padding = " " * ((65 - "Timer Options".Length) / 2)
-            Write-Host ""
-            Write-Host ""
-            Write-Host ""
-            Write-Host ""
-            Write-Host ""
-            Write-Host ""
-            Write-Host "${padding}Timer Options"
-            Write-Host ""
-            for ($i = 0; $i -lt $options.Length; $i++) {
-                $text = if ($i -eq $selectedIndex) { $options[$i] + " <-" } else { $options[$i] }
-                $padding = " " * ((65 - $text.Length) / 2)
-                Write-Host "${padding}$text"
-            }
-            Write-Host ""
-
-            $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-            switch ($key.VirtualKeyCode) {
-                38 { if ($selectedIndex -gt 0) { $selectedIndex-- } }
-                40 { if ($selectedIndex -lt $options.Length - 1) { $selectedIndex++ } }
-                13 { # Enter key
-                    switch ($selectedIndex) {
-                        0 {
-                            $soundStatus = Set-SoundToggle -currentStatus $soundStatus
-                            $settings[0] = $soundStatus
-                            $settings | Out-File "settings.cfg" -Force
-                        }
-                        1 {
-                            $newTimings = Enter-Timings
-                            if ($newTimings) {
-                                $timings = "$($newTimings[0]) $($newTimings[1])"
-                            }
-                        }
-                        2 { return }
-                    }
-                }
-            }
-        }
-    }
 }
 
 function Enter-Timings {
     Write-Host "Enter one or two times in minutes separated by space (e.g., 5 or 1 3):"
     $timings = Read-Host
     if ($timings -match '^\d+$') {
-        $settings = Get-Content "settings.cfg"
+        $settings = Get-Settings
         $settings[1] = "$timings $timings"
         $settings | Out-File "settings.cfg" -Force
         return @($timings, $timings)
     } elseif ($timings -match '^\d+\s\d+$') {
-        $settings = Get-Content "settings.cfg"
+        $settings = Get-Settings
         $settings[1] = $timings
         $settings | Out-File "settings.cfg" -Force
         return $timings.Split(' ')
@@ -162,47 +136,34 @@ function Enter-Timings {
 
 function Get-Settings {
     if (Test-Path "settings.cfg") {
-        return Get-Content "settings.cfg"
+        $settings = Get-Content "settings.cfg"
+        if ($settings.Count -lt 3) {
+            $settings += "Not Set"
+        }
+        return $settings
     } else {
-        Write-Host "No settings found."
-        return $null
+        return @("Off", "1 2", "Not Set")
     }
 }
 
 function ClickMouse {
-    [MouseClick]::Click()
     $settings = Get-Settings
-    if ($null -ne $settings -and $settings[0] -eq "On") {
+    if ($settings[0] -eq "On") {
         (New-Object Media.SoundPlayer $clickSoundPath).Play()
     }
 
-    if (Test-Path "location.cfg") {
-        $location = Get-Content -Path "location.cfg"
-        $coords = $location.Split(" ")
+    if ($settings[2] -ne "Not Set") {
+        $coords = $settings[2].Split(" ")
         $x = [int]$coords[0]
         $y = [int]$coords[1]
 
-        Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-
-public class MouseMovement {
-    [DllImport("user32.dll")]
-    public static extern bool SetCursorPos(int X, int Y);
-}
-"@
-
-        $currentPosition = [CursorPosition]::GetCursorPosition()
-        [MouseMovement]::SetCursorPos($x, $y)
-        [MouseClick]::Click()
-        [MouseMovement]::SetCursorPos($currentPosition.X, $currentPosition.Y)
+        [MouseClicker]::ClickAt($x, $y)
     } else {
         Write-Host "No location set. Click at current position."
-        [MouseClick]::Click()
+        $currentPosition = [CursorPosition]::GetCursorPosition()
+        [MouseClicker]::ClickAt($currentPosition.X, $currentPosition.Y)
     }
 }
-
-
 
 function Start-Timer {
     param ([int]$min, [int]$max)
@@ -210,19 +171,22 @@ function Start-Timer {
     $maxSeconds = [int]$max * 60
     Clear-Host
     while ($true) {
-        # Check if the min and max are the same
         if ($minSeconds -eq $maxSeconds) {
             $timer = $minSeconds
         } else {
             $timer = Get-Random -Minimum $minSeconds -Maximum $maxSeconds
         }
-        
+
         $stopwatch = [system.diagnostics.stopwatch]::StartNew()
         while ($stopwatch.Elapsed.TotalSeconds -lt $timer) {
             $progress = ($stopwatch.Elapsed.TotalSeconds / $timer) * 100
             $remainingTime = [TimeSpan]::FromSeconds($timer - $stopwatch.Elapsed.TotalSeconds)
             Write-Progress -Activity "Progress" -PercentComplete $progress -Status "Elapsed: $($stopwatch.Elapsed.ToString('mm\:ss')) / Remaining: $($remainingTime.ToString('mm\:ss')) (Esc key for Menu)"
-            if ($host.UI.RawUI.KeyAvailable -and $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -eq 27) { Write-Progress -Activity "Progress" -Completed; return }
+            if ($host.UI.RawUI.KeyAvailable -and $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -eq 27) { 
+                Write-Progress -Activity "Progress" -Completed
+                Start-Sleep -Seconds 2  # Pause before returning to menu
+                return 
+            }
             Start-Sleep -Seconds 1
         }
         ClickMouse
@@ -236,7 +200,7 @@ function Click-EverySecond {
     $countdown = 5
     while ($countdown -gt 0) {
         $padding = " " * ((65 - "Auto-clicking begins in $countdown seconds...".Length) / 2)
-        Write-Host "${padding}Autoclicking begins in $countdown seconds..."
+        Write-Host "${padding}Auto-clicking begins in $countdown seconds..."
         Start-Sleep -Seconds 1
         Clear-Host
         $countdown--
@@ -246,21 +210,38 @@ function Click-EverySecond {
         $clickCount++
         $status = "Clicks: $clickCount, Time: $($stopwatch.Elapsed.ToString('mm\:ss')) (Esc key for Main Menu)"
         Write-Progress -Activity "Progress" -Status $status -PercentComplete (($stopwatch.Elapsed.TotalSeconds % 60) / 60 * 100)
-        if ($host.UI.RawUI.KeyAvailable -and $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -eq 27) { Write-Progress -Activity "Progress" -Completed; return }
+        if ($host.UI.RawUI.KeyAvailable -and $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -eq 27) { 
+            Write-Progress -Activity "Progress" -Completed
+            Start-Sleep -Seconds 2  # Pause before returning to menu
+            return 
+        }
         Start-Sleep -Seconds 1
     }
 }
 
 while ($true) {
-    $settings = if (Test-Path "settings.cfg") { Get-Content "settings.cfg" } else { @("Off", "1 2") }
+    $settings = Get-Settings
     $soundStatus = $settings[0]
     $timings = $settings[1]
+    $location = if ($settings.Length -gt 2) { $settings[2] } else { "Not Set" }
 
-    switch (Show-Menu -soundStatus $soundStatus -timings $timings) {
+    switch (Show-Menu -soundStatus $soundStatus -timings $timings -location $location) {
         1 { Click-EverySecond }
         2 { Start-Timer -min ([int]$timings.Split(' ')[0]) -max ([int]$timings.Split(' ')[1]) }
         3 { Set-Location } # Call Set-Location function
-        4 { Timer-Options } # Call Timer-Options function
-        5 { exit }
+        4 { 
+            $soundStatus = Set-SoundToggle -currentStatus $soundStatus
+            $settings[0] = $soundStatus
+            $settings | Out-File "settings.cfg" -Force
+        }
+        5 { 
+            $newTimings = Enter-Timings
+            if ($newTimings) {
+                $timings = "$($newTimings[0]) $($newTimings[1])"
+                $settings[1] = $timings
+                $settings | Out-File "settings.cfg" -Force
+            }
+        }
+        6 { exit }
     }
 }
