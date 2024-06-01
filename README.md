@@ -1,11 +1,11 @@
 # AutoClix
 ## Status:
-Broken after issues running while inactive, that have somehow crept in with the implementation of set location. when this is fixed, there will be a release version. 
+Broken after issues running while inactive, that have somehow crept in with the implementation of set location.
 
 Recently updated...
 - two values the same number was causing bugs
-- upgraded to accept, 1 or 2 values correctly.
-- added set location option.
+- upgraded to accept, 1 or 2, values of minutes.
+- added set location option, to free the mouse.
 
 ## Description
 
