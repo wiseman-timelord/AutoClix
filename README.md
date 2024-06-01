@@ -1,6 +1,19 @@
 # AutoClix
 ## Status:
 Issue with recording mouse position before click, and put it back there after, this is being investigated.
+- Stuck on this currently..
+```
+Unable to find type [CursorPosition]. Make sure that the 
+assembly that contains this type is loaded.
+At E:\ProgsCreations\AutoClix\autoclix.ps1:110 char:5
++     $point = [CursorPosition]::GetCursorPosition()
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (CursorPosition 
+   :TypeName) [], RuntimeException
+    + FullyQualifiedErrorId : TypeNotFound
+ ```
+
+
 
 ## Description
 
