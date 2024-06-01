@@ -1,12 +1,23 @@
 $osVersion = [System.Environment]::OSVersion.Version
 $clickSoundPath = Join-Path $PSScriptRoot "click44.wav"
+$errorLogPath = Join-Path $PSScriptRoot "issues.log"
 
-Add-Type @"
+function Log-Error {
+    param (
+        [string]$message
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    "$timestamp - $message" | Out-File -FilePath $errorLogPath -Append -Force
+}
+
+function Ensure-Types {
+    Write-Host "Ensuring MouseClick type is loaded..."
+    if (-not ([System.Management.Automation.PSTypeName]'MouseClick')) {
+        Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 
-public class MouseClicker
-{
+public class MouseClick {
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
     public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, UIntPtr dwExtraInfo);
 
@@ -14,22 +25,45 @@ public class MouseClicker
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetCursorPos(int X, int Y);
 
-    const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
-    const uint MOUSEEVENTF_LEFTUP = 0x0004;
+    public static void Click() { mouse_event(0x0002, 0, 0, 0, 0); mouse_event(0x0004, 0, 0, 0, 0); }
 
-    public static void Click()
-    {
-        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
-        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
-    }
-
-    public static void ClickAt(int x, int y)
-    {
+    public static void ClickAt(int x, int y) {
         SetCursorPos(x, y);
         Click();
     }
 }
 "@
+    }
+
+    Write-Host "Ensuring CursorPosition type is loaded..."
+    if (-not ([System.Management.Automation.PSTypeName]'CursorPosition')) {
+        Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+public class CursorPosition {
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out POINT lpPoint);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT {
+        public int X;
+        public int Y;
+    }
+
+    public static POINT GetCursorPosition() {
+        POINT point;
+        GetCursorPos(out point);
+        return point;
+    }
+
+    public static void SetCursorPosition(int x, int y) {
+        SetCursorPos(x, y);
+    }
+}
+"@
+    }
+}
 
 function Set-SoundToggle {
     param ([string]$currentStatus)
@@ -75,62 +109,59 @@ function Show-Menu {
             }
         }
     } catch {
-        Write-Host "An error occurred: $_"
+        $errorMessage = "An error occurred: $_"
+        Write-Host $errorMessage
+        Log-Error -message $errorMessage
+        Start-Sleep -Seconds 3
     }
 }
 
 function Set-Location {
-    Add-Type @"
-using System;
-using System.Runtime.InteropServices;
+    Ensure-Types
 
-public class CursorPosition {
-    [DllImport("user32.dll")]
-    public static extern bool GetCursorPos(out POINT lpPoint);
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct POINT {
-        public int X;
-        public int Y;
+    try {
+        $point = [CursorPosition]::GetCursorPosition()
+        $location = "$($point.X) $($point.Y)"
+        $settings = Get-Settings
+        if ($settings.Count -lt 3) {
+            $settings += $location
+        } else {
+            $settings[2] = $location
+        }
+        $settings | Out-File -FilePath "settings.cfg" -Force
+        Write-Host "Location set to: $location"
+        Start-Sleep -Seconds 2
+    } catch {
+        $errorMessage = "Failed to set location: $_"
+        Write-Host $errorMessage
+        Log-Error -message $errorMessage
+        Start-Sleep -Seconds 3
     }
-
-    public static POINT GetCursorPosition() {
-        POINT point;
-        GetCursorPos(out point);
-        return point;
-    }
-}
-"@
-
-    $point = [CursorPosition]::GetCursorPosition()
-    $location = "$($point.X) $($point.Y)"
-    $settings = Get-Settings
-    if ($settings.Count -lt 3) {
-        $settings += $location
-    } else {
-        $settings[2] = $location
-    }
-    $settings | Out-File -FilePath "settings.cfg" -Force
-    Write-Host "Location set to: $location"
-    Start-Sleep -Seconds 2
 }
 
 function Enter-Timings {
     Write-Host "Enter one or two times in minutes separated by space (e.g., 5 or 1 3):"
     $timings = Read-Host
-    if ($timings -match '^\d+$') {
-        $settings = Get-Settings
-        $settings[1] = "$timings $timings"
-        $settings | Out-File "settings.cfg" -Force
-        return @($timings, $timings)
-    } elseif ($timings -match '^\d+\s\d+$') {
-        $settings = Get-Settings
-        $settings[1] = $timings
-        $settings | Out-File "settings.cfg" -Force
-        return $timings.Split(' ')
-    } else {
-        Write-Host "Invalid input. Enter one number or two numbers separated by space."
-        return $null
+    try {
+        if ($timings -match '^\d+$') {
+            $settings = Get-Settings
+            $settings[1] = "$timings $timings"
+            $settings | Out-File "settings.cfg" -Force
+            return @($timings, $timings)
+        } elseif ($timings -match '^\d+\s\d+$') {
+            $settings = Get-Settings
+            $settings[1] = $timings
+            $settings | Out-File "settings.cfg" -Force
+            return $timings.Split(' ')
+        } else {
+            Write-Host "Invalid input. Enter one number or two numbers separated by space."
+            return $null
+        }
+    } catch {
+        $errorMessage = "Failed to enter timings: $_"
+        Write-Host $errorMessage
+        Log-Error -message $errorMessage
+        Start-Sleep -Seconds 3
     }
 }
 
@@ -147,25 +178,41 @@ function Get-Settings {
 }
 
 function ClickMouse {
+    Ensure-Types
+
     $settings = Get-Settings
     if ($settings[0] -eq "On") {
         (New-Object Media.SoundPlayer $clickSoundPath).Play()
     }
 
-    if ($settings[2] -ne "Not Set") {
-        $coords = $settings[2].Split(" ")
-        $x = [int]$coords[0]
-        $y = [int]$coords[1]
+    # Store the current mouse position
+    $currentPosition = [CursorPosition]::GetCursorPosition()
 
-        [MouseClicker]::ClickAt($x, $y)
-    } else {
-        Write-Host "No location set. Click at current position."
-        $currentPosition = [CursorPosition]::GetCursorPosition()
-        [MouseClicker]::ClickAt($currentPosition.X, $currentPosition.Y)
+    try {
+        if ($settings[2] -ne "Not Set") {
+            $coords = $settings[2].Split(" ")
+            $x = [int]$coords[0]
+            $y = [int]$coords[1]
+
+            [MouseClick]::ClickAt($x, $y)
+        } else {
+            Write-Host "No location set. Click at current position."
+            [MouseClick]::Click()
+        }
+    } catch {
+        $errorMessage = "Failed to click mouse: $_"
+        Write-Host $errorMessage
+        Log-Error -message $errorMessage
+        Start-Sleep -Seconds 3
     }
+
+    # Restore the mouse position
+    [CursorPosition]::SetCursorPosition($currentPosition.X, $currentPosition.Y)
 }
 
 function Start-Timer {
+    Ensure-Types
+
     param ([int]$min, [int]$max)
     $minSeconds = [int]$min * 60
     $maxSeconds = [int]$max * 60
@@ -194,6 +241,8 @@ function Start-Timer {
 }
 
 function Click-EverySecond {
+    Ensure-Types
+
     $clickCount = 0
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
     Clear-Host
@@ -220,6 +269,8 @@ function Click-EverySecond {
 }
 
 while ($true) {
+    Ensure-Types
+
     $settings = Get-Settings
     $soundStatus = $settings[0]
     $timings = $settings[1]
