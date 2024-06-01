@@ -26,7 +26,7 @@ function Set-SoundToggle {
 function Show-Menu {
     param ([string]$soundStatus, [string]$timings)
     Clear-Host
-    $options = @("Every Second", "Period ($timings)", "Timer Options", "Quit Program")
+    $options = @("Every Second", "Period ($timings)", "Set Location", "Timer Options", "Quit Program")
     $selectedIndex = 0
 
     while ($true) {
@@ -55,6 +55,40 @@ function Show-Menu {
         }
     }
 }
+
+
+
+function Set-Location {
+    Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+
+public class CursorPosition {
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out POINT lpPoint);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT {
+        public int X;
+        public int Y;
+    }
+
+    public static POINT GetCursorPosition() {
+        POINT point;
+        GetCursorPos(out point);
+        return point;
+    }
+}
+"@
+
+    $point = [CursorPosition]::GetCursorPosition()
+    $location = "$($point.X) $($point.Y)"
+    $location | Out-File -FilePath "location.cfg" -Force
+    Write-Host "Location set to: $location"
+    Start-Sleep -Seconds 2
+}
+
+
 
 function Timer-Options {
     while ($true) {
@@ -141,7 +175,34 @@ function ClickMouse {
     if ($null -ne $settings -and $settings[0] -eq "On") {
         (New-Object Media.SoundPlayer $clickSoundPath).Play()
     }
+
+    if (Test-Path "location.cfg") {
+        $location = Get-Content -Path "location.cfg"
+        $coords = $location.Split(" ")
+        $x = [int]$coords[0]
+        $y = [int]$coords[1]
+
+        Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+
+public class MouseMovement {
+    [DllImport("user32.dll")]
+    public static extern bool SetCursorPos(int X, int Y);
 }
+"@
+
+        $currentPosition = [CursorPosition]::GetCursorPosition()
+        [MouseMovement]::SetCursorPos($x, $y)
+        [MouseClick]::Click()
+        [MouseMovement]::SetCursorPos($currentPosition.X, $currentPosition.Y)
+    } else {
+        Write-Host "No location set. Click at current position."
+        [MouseClick]::Click()
+    }
+}
+
+
 
 function Start-Timer {
     param ([int]$min, [int]$max)
@@ -198,7 +259,8 @@ while ($true) {
     switch (Show-Menu -soundStatus $soundStatus -timings $timings) {
         1 { Click-EverySecond }
         2 { Start-Timer -min ([int]$timings.Split(' ')[0]) -max ([int]$timings.Split(' ')[1]) }
-        3 { Timer-Options } # Call Timer-Options function
-        4 { exit }
+        3 { Set-Location } # Call Set-Location function
+        4 { Timer-Options } # Call Timer-Options function
+        5 { exit }
     }
 }
