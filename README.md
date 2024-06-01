@@ -9,7 +9,7 @@ Recently updated...
 
 ## Description
 
-AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks in different intervals, upon a user specified location on the screen, it will then immediately return to the position the curser was in before the click. This is useful where you have an application requiring you to repeatingly click on a button, such as batch genetic backtesting in MetaTrader, or playing virtual games where something must be clicked. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features, arrow menu control, sound notifications, progress bars, configuration persistence, and more.
+AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks in different intervals, upon a user specified location on the screen, it will then immediately return to the position the curser was in before the click. This is useful where you have an application requiring you to repeatingly click on a button, such as batch genetic backtesting in MetaTrader, or playing virtual games where something must be clicked. The user is then free to leave the window open on one monitor, and use other monitors for work/play, as if one had the monitor connected to a separate computer. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features, arrow menu control, sound notifications, progress bars, configuration persistence, and more.
 
 ## Features
 
