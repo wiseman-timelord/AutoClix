@@ -1,6 +1,6 @@
 # AutoClix
 ## Status:
-Working. Version 1.0 Release
+Issue with recording mouse position before click, and put it back there after, this is being investigated.
 
 ## Description
 
