@@ -1,6 +1,6 @@
 # AutoClix
 ## Status:
-Broken after issues running while inactive, that have somehow crept in, when this is fixed, there will be a release. 
+Broken after issues running while inactive, that have somehow crept in with the implementation of set location. when this is fixed, there will be a release version. 
 
 Recently updated...
 - two values the same number was causing bugs
