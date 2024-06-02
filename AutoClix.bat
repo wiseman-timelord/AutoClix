@@ -1,6 +1,6 @@
 :: Initiation
 @echo off
-mode 65,20
+mode 65,23
 Echo.
 Echo.
 
@@ -43,17 +43,18 @@ goto menu
 @echo on
 powershell -ExecutionPolicy Bypass -File "autoclix.ps1"
 @echo off
-goto exit
+goto menu
 
 :: Start with Logging
 :start_logging
 @echo on
-powershell -ExecutionPolicy Bypass -File "autoclix.ps1" 2> issues.log
+powershell -ExecutionPolicy Bypass -File "autoclix.ps1" 3>&1 2>> issues.log
 @echo off
-goto exit
+goto menu
 
 :: Exit Program
 :exit
 Echo.
 Echo.
 pause
+goto menu
