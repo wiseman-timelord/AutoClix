@@ -1,6 +1,6 @@
 # AutoClix
 ## Status:
-Issue with recording mouse position before click, and put it back there after, this is being investigated.
+Broken for now. Issue with recording mouse position before click, and put it back there after, this is being investigated.
 - Stuck on this currently..
 ```
 Unable to find type [CursorPosition]. Make sure that the 
@@ -12,8 +12,6 @@ At E:\ProgsCreations\AutoClix\autoclix.ps1:110 char:5
    :TypeName) [], RuntimeException
     + FullyQualifiedErrorId : TypeNotFound
  ```
-
-
 
 ## Description
 
