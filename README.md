@@ -1,7 +1,7 @@
 # AutoClix
 ## Status:
-Broken for now. Issue with recording mouse position before click, and put it back there after, this is being investigated.
-- Stuck on this currently..
+Broken for now, do not use, under development...
+- Issue with recording mouse position before click, and put it back there after, this is being investigated.
 ```
 Unable to find type [CursorPosition]. Make sure that the 
 assembly that contains this type is loaded.
@@ -12,6 +12,10 @@ At E:\ProgsCreations\AutoClix\autoclix.ps1:110 char:5
    :TypeName) [], RuntimeException
     + FullyQualifiedErrorId : TypeNotFound
  ```
+
+- Also possibly permanently corrupting mouse wheel hotkeys, could be the version here that did it, or a newer one I have been working on, either way, that needs investigating too.
+
+
 
 ## Description
 
