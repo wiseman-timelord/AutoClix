@@ -31,7 +31,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 
 
-            Start Click To Selected Timer <-
+                Click To Selected Timer <-
                 Change Timer Range (9 9)
                Toggle Clicking Sounds (On)
                     Quit/Exit Program
