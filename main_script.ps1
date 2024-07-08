@@ -200,7 +200,7 @@ function Show-Menu {
         $soundStatus = $global:settings.SoundStatus
         $timings = $global:settings.Timings
         $options = @(
-            "Start Click To Selected Timer",
+            "Click To Selected Timer",
             "Change Timer Range ($timings)",
             "Toggle Clicking Sounds ($soundStatus)",
             "Quit/Exit Program"
