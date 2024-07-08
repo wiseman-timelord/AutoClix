@@ -22,17 +22,26 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 ### Preview
 - The Main Menu...
 ```
+=======================( AutoClix )======================
 
 
 
-                            AutoClix
 
-                   Start Click Every Second <-
-                    Start Click Periodically
-                  Set Click Location (3156 986)
-                   Toggle Clicking Sounds (On)
-                    Change Timer Range (8 8)
-                        Quit/Exit Program
+
+
+
+
+            Start Click To Selected Timer <-
+                Change Timer Range (9 9)
+               Toggle Clicking Sounds (On)
+                    Quit/Exit Program
+
+
+
+
+
+
+
 
 
 
