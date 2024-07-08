@@ -1,28 +1,14 @@
 # AutoClix
-## Status:
-Broken for now, do not use, under development...
-- Issue with recording mouse position before click, and put it back there after, this is being investigated.
-```
-Unable to find type [CursorPosition]. Make sure that the 
-assembly that contains this type is loaded.
-At E:\ProgsCreations\AutoClix\autoclix.ps1:110 char:5
-+     $point = [CursorPosition]::GetCursorPosition()
-+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : InvalidOperation: (CursorPosition 
-   :TypeName) [], RuntimeException
-    + FullyQualifiedErrorId : TypeNotFound
- ```
 
-- Also possibly permanently corrupting mouse wheel hotkeys, could be the version here that did it, or a newer one I have been working on, either way, that needs investigating too.
-
-
+### Development
+Status - Working. Its basic, the plans are...
+- set location on the screen, when started it will then click there and immediately return to the position the curser was in before the click, thus allowing the user to get on with things on a different monitor.
 
 ## Description
 
-AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks in different intervals, upon a user specified location on the screen, it will then immediately return to the position the curser was in before the click. This is useful where you have an application requiring you to repeatingly click on a button, such as batch genetic backtesting in MetaTrader, or playing virtual games where something must be clicked. The user is then free to leave the window open on one monitor, and use other monitors for work/play, as if one had the monitor connected to a separate computer. It's built with user-friendliness in mind, offering clickable batch files for running the ".ps1" script. The program features, arrow menu control, sound notifications, progress bars, configuration persistence, and more.
+AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks in different intervals. This is useful where you have an application requiring you to repeatingly click on a button, such as batch genetic backtesting in MetaTrader, or playing virtual games where something must be clicked. The user is then free to leave the computer, and do the chors/gardening, and return to the computer, as if you had been there periodically clicking on something. 
 
-## Features
-
+### Features
 1. **Randomized Range or Period:** Performs mouse clicks at random intervals within a user-defined range or just every number of minutes.
 2. **Every Second Clicking:** Option to perform a click every second, probably a safe spam default.
 3. **Set Click Location:** It enables the user to get on with other tasks on the other windows, while having control of the mouse.
@@ -32,7 +18,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 6. **Windows Compatibility:** Designed specifically for Windows users.
 7. "AutoClix.lnk" provided contains required arguements to run "AutoClix.bat" from taskbar, but edit paths. 
 
-## Interface
+### Preview
 - The Main Menu...
 ```
 
@@ -71,19 +57,18 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 
 ```
 
-## Usage
+## Requirements
 
+- Windows 7-11 preferably with the 5.1 
+- PowerShellCore =>7
+
+### Usage
 1. Run the script by clicking "AutoClix.bat".
 2. Navigate through the menus using the arrow keys.
 3. Select Timer Options to configure.
 4. Select the desired clicking modes.
 5. Press the 'Esc' key to return to menu.
 6. Exit program from main menu.
-
-## Requirements
-
-- Windows 7-11 preferably with the 5.1 
-- PowerShellCore =>7
 
 ## Notes
 
