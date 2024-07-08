@@ -2,7 +2,7 @@
 
 ### Development
 Status - Working. Its basic, the plans are...
-- straight numbers works, number ranges needs testing.
+- straight numbers works, number ranges dont.
 - set location on the screen, when started it will then click there and immediately return to the position the curser was in before the click, thus allowing the user to get on with things on a different monitor.
 
 ## Description
