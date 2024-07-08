@@ -2,6 +2,7 @@ $osVersion = [System.Environment]::OSVersion.Version
 $clickSoundPath = Join-Path $PSScriptRoot ".\sounds\click44.wav"
 $errorLogPath = Join-Path $PSScriptRoot ".\data\issues.log"
 $settingsPath = Join-Path $PSScriptRoot ".\data\settings.psd1"
+$global:settings = @{}
 
 function Log-Error {
     param (
@@ -9,6 +10,10 @@ function Log-Error {
     )
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     "$timestamp - $message" | Out-File -FilePath $errorLogPath -Append -Force
+}
+
+function Load-Settings {
+    $global:settings = Manage-PowerShellData1 -Path $settingsPath
 }
 
 function Ensure-Types {
@@ -92,6 +97,10 @@ function Manage-PowerShellData1 {
     }
 }
 
+function Save-Settings {
+    Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+}
+
 function Set-SoundToggle {
     param ([string]$currentStatus)
     if ($currentStatus -eq "Off") {
@@ -106,24 +115,27 @@ function Enter-Timings {
     $timings = Read-Host
     try {
         if ($timings -match '^\d+$') {
-            $settings = Manage-PowerShellData1 -Path $settingsPath
-            $settings.Timings = "$timings $timings"
-            Manage-PowerShellData1 -Path $settingsPath -Data $settings
-            return @($timings, $timings)
+            $global:settings.Timings = "$timings $timings"
         } elseif ($timings -match '^\d+\s\d+$') {
-            $settings = Manage-PowerShellData1 -Path $settingsPath
-            $settings.Timings = $timings
-            Manage-PowerShellData1 -Path $settingsPath -Data $settings
-            return $timings.Split(' ')
+            $global:settings.Timings = $timings
         } else {
             Write-Host "Invalid input. Enter one number or two numbers separated by space."
             return $null
         }
+
+        # Save the updated settings to the PSD1 file
+        Save-Settings
+
+        # Reload the global settings to ensure they reflect the updated PSD1 file
+        Load-Settings
+
+        return $global:settings.Timings.Split(' ')
     } catch {
         $errorMessage = "Failed to enter timings: $_"
         Write-Host $errorMessage
         Log-Error -message $errorMessage
         Start-Sleep -Seconds 3
+        return $null
     }
 }
 
@@ -182,13 +194,11 @@ function Start-Timer {
     }
 }
 
-
 function Show-Menu {
     Clear-Host
     while ($true) {
-        $settings = Get-Settings
-        $soundStatus = $settings.SoundStatus
-        $timings = $settings.Timings
+        $soundStatus = $global:settings.SoundStatus
+        $timings = $global:settings.Timings
         $options = @(
             "Start Click To Selected Timer",
             "Change Timer Range ($timings)",
@@ -216,23 +226,38 @@ function Show-Menu {
                     13 { 
                         switch ($selectedIndex + 1) {
                             1 { 
-                                $timingParts = $timings.Split(' ')
-                                Start-Timer -min ([int]$timingParts[0]) -max ([int]$timingParts[1])
+                                $timingParts = $global:settings.Timings.Split(' ')
+                                if ($timingParts.Count -eq 2) {
+                                    Start-Timer -min ([int]$timingParts[0]) -max ([int]$timingParts[1])
+                                } else {
+                                    Write-Host "Invalid timing settings. Please update the timer range."
+                                }
                             }
                             2 { 
                                 $newTimings = Enter-Timings
                                 if ($newTimings) {
-                                    $timings = "$($newTimings[0]) $($newTimings[1])"
-                                    $settings.Timings = $timings
-                                    Manage-PowerShellData1 -Path $settingsPath -Data $settings
+                                    $global:settings.Timings = "$($newTimings[0]) $($newTimings[1])"
+                                    Save-Settings
+                                    Load-Settings
+
+                                    # Update the $timings variable to reflect the new timings
+                                    $timings = $global:settings.Timings
+                                    $options[1] = "Change Timer Range ($timings)"
                                 }
                             }
                             3 { 
                                 $soundStatus = Set-SoundToggle -currentStatus $soundStatus
-                                $settings.SoundStatus = $soundStatus
-                                Manage-PowerShellData1 -Path $settingsPath -Data $settings
+                                $global:settings.SoundStatus = $soundStatus
+                                Save-Settings
+                                Load-Settings
+
+                                # Update the $soundStatus variable to reflect the new status
+                                $options[2] = "Toggle Clicking Sounds ($soundStatus)"
                             }
-                            4 { exit }
+                            4 { 
+                                Save-Settings
+                                exit 
+                            }
                         }
                     }
                 }
@@ -247,5 +272,9 @@ function Show-Menu {
 }
 
 
+
+
+# Entry Point
+Load-Settings
 Ensure-Types
 Show-Menu
