@@ -1,4 +1,4 @@
 @{
-    Timings = "10 10" 
-    SoundStatus = "On"
+    SoundStatus = 'On'
+    Timings = '7'
 }

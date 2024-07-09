@@ -4,11 +4,6 @@ mode 57,23
 Echo.
 Echo.
 
-:: Graphic Text
-Echo Time to let the computer do the work, while you chillax!
-echo.
-timeout /t 2 >nul 
-
 :: Menu
 :menu
 cls

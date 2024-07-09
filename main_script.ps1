@@ -4,16 +4,17 @@ $errorLogPath = Join-Path $PSScriptRoot ".\data\issues.log"
 $settingsPath = Join-Path $PSScriptRoot ".\data\settings.psd1"
 $global:settings = @{}
 
+
+function Printed-TitleBar {
+    Write-Host ("`n=======================( AutoClix )======================`n")
+}
+
 function Log-Error {
     param (
         [string]$message
     )
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     "$timestamp - $message" | Out-File -FilePath $errorLogPath -Append -Force
-}
-
-function Load-Settings {
-    $global:settings = Manage-PowerShellData1 -Path $settingsPath
 }
 
 function Ensure-Types {
@@ -43,7 +44,6 @@ public class MouseClick {
     }
 }
 
-# Import/export function for psd1 files
 function Manage-PowerShellData1 {
     param (
         [string]$Path,
@@ -56,49 +56,30 @@ function Manage-PowerShellData1 {
             $content = $content -replace '^(#.*[\r\n]*)+', '' # Remove lines starting with '#'
             $content = $content -replace '\bTrue\b', '$true' -replace '\bFalse\b', '$false'
             $scriptBlock = [scriptblock]::Create($content)
-            return . $scriptBlock
+            $loadedData = . $scriptBlock
+
+            # Set default values if they don't exist
+            if (-not $loadedData.ContainsKey("SoundStatus")) {
+                $loadedData.SoundStatus = "On"
+            }
+            if (-not $loadedData.ContainsKey("Timings")) {
+                $loadedData.Timings = "1 3"
+            }
+
+            return $loadedData
         } else {
-            return @{}
-        }
-    } else {
-        function ConvertTo-Psd1Content {
-            param ($Value)
-            switch ($Value) {
-                { $_ -is [System.Collections.Hashtable] } {
-                    "@{" + ($Value.GetEnumerator() | ForEach-Object {
-                        "`n    $($_.Key) = $(ConvertTo-Psd1Content $_.Value)"
-                    }) -join ";" + "`n}" + "`n"
-                }
-                { $_ -is [System.Collections.IEnumerable] -and $_ -isnot [string] } {
-                    "@(" + ($Value | ForEach-Object {
-                        ConvertTo-Psd1Content $_
-                    }) -join ", " + ")"
-                }
-                { $_ -is [PSCustomObject] } {
-                    $hashTable = @{}
-                    $_.psobject.properties | ForEach-Object { $hashTable[$_.Name] = $_.Value }
-                    ConvertTo-Psd1Content $hashTable
-                }
-                { $_ -is [string] } { "`"$Value`"" }
-                { $_ -is [int] -or $_ -is [long] -or $_ -is [bool] -or $_ -is [double] -or $_ -is [decimal] } { $_ }
-                default { 
-                    "`"$Value`"" 
-                }
+            return @{
+                SoundStatus = "On"
+                Timings = "1 3"
             }
         }
-
-        $psd1Content = "@{" + ($Data.GetEnumerator() | ForEach-Object {
-            "`n    $($_.Key) = $(ConvertTo-Psd1Content $_.Value)"
-        }) -join ";" + "`n" + "}"
-        if (-not $psd1Content.EndsWith("}")) {
-            $psd1Content += "`n}"
-        }
+    } else {
+        $psd1Content = "@{
+    SoundStatus = '$($Data.SoundStatus)'
+    Timings = '$($Data.Timings)'
+}"
         Set-Content -Path $Path -Value $psd1Content -Force
     }
-}
-
-function Save-Settings {
-    Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
 }
 
 function Set-SoundToggle {
@@ -111,43 +92,31 @@ function Set-SoundToggle {
 }
 
 function Enter-Timings {
-    Write-Host "Enter one or two times in minutes separated by space (e.g., 5 or 1 3):"
-    $timings = Read-Host
+    $timing = Read-Host -Prompt "Enter a time in minutes (e.g., 5)"
     try {
-        if ($timings -match '^\d+$') {
-            $global:settings.Timings = "$timings $timings"
-        } elseif ($timings -match '^\d+\s\d+$') {
-            $global:settings.Timings = $timings
+        if ($timing -match '^\d+$') {
+            $global:settings.Timings = $timing
+            Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+            $global:settings = Manage-PowerShellData1 -Path $settingsPath
+            return $timing
         } else {
-            Write-Host "Invalid input. Enter one number or two numbers separated by space."
+            Write-Host "Invalid input. Please enter a single number."
             return $null
         }
-
-        # Save the updated settings to the PSD1 file
-        Save-Settings
-
-        # Reload the global settings to ensure they reflect the updated PSD1 file
-        Load-Settings
-
-        return $global:settings.Timings.Split(' ')
     } catch {
-        $errorMessage = "Failed to enter timings: $_"
+        $errorMessage = "Failed to enter timing: $_"
         Write-Host $errorMessage
         Log-Error -message $errorMessage
-        Start-Sleep -Seconds 3
+        Start-Sleep -Seconds 22
         return $null
     }
-}
-
-function Get-Settings {
-    return Manage-PowerShellData1 -Path $settingsPath
 }
 
 function ClickMouse {
     Ensure-Types
 
-    $settings = Get-Settings
-    if ($settings.SoundStatus -eq "On") {
+    # Access the global settings directly
+    if ($global:settings.SoundStatus -eq "On") {
         (New-Object Media.SoundPlayer $clickSoundPath).Play()
     }
 
@@ -157,7 +126,7 @@ function ClickMouse {
         $errorMessage = "Failed to click mouse: $_"
         Write-Host $errorMessage
         Log-Error -message $errorMessage
-        Start-Sleep -Seconds 3
+        Start-Sleep -Seconds 2
     }
 }
 
@@ -168,24 +137,16 @@ function Start-Timer {
     )
     Ensure-Types
 
-    $minSeconds = [int]$min * 60
-    $maxSeconds = [int]$max * 60
-    Clear-Host
+    $seconds = [int]$min * 60
     while ($true) {
-        if ($minSeconds -eq $maxSeconds) {
-            $timer = $minSeconds
-        } else {
-            $timer = Get-Random -Minimum $minSeconds -Maximum $maxSeconds
-        }
-
         $stopwatch = [system.diagnostics.stopwatch]::StartNew()
-        while ($stopwatch.Elapsed.TotalSeconds -lt $timer) {
-            $progress = ($stopwatch.Elapsed.TotalSeconds / $timer) * 100
-            $remainingTime = [TimeSpan]::FromSeconds($timer - $stopwatch.Elapsed.TotalSeconds)
+        while ($stopwatch.Elapsed.TotalSeconds -lt $seconds) {
+            $progress = ($stopwatch.Elapsed.TotalSeconds / $seconds) * 100
+            $remainingTime = [TimeSpan]::FromSeconds($seconds - $stopwatch.Elapsed.TotalSeconds)
             Write-Progress -Activity "Progress" -PercentComplete $progress -Status "Elapsed: $($stopwatch.Elapsed.ToString('mm\:ss')) / Remaining: $($remainingTime.ToString('mm\:ss')) (Esc key for Menu)"
             if ($host.UI.RawUI.KeyAvailable -and $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp").VirtualKeyCode -eq 27) { 
                 Write-Progress -Activity "Progress" -Completed
-                Start-Sleep -Seconds 2  # Pause before returning to menu
+                Start-Sleep -Seconds 1
                 return 
             }
             Start-Sleep -Seconds 1
@@ -194,87 +155,74 @@ function Start-Timer {
     }
 }
 
+function Center-Text {
+    param (
+        [string]$text,
+        [int]$width
+    )
+    $padSize = [math]::Max(0, ($width - $text.Length) / 2)
+    return (" " * [math]::Floor($padSize)) + $text + (" " * [math]::Ceiling($padSize))
+}
+
+function Center-Text {
+    param (
+        [string]$text,
+        [int]$width
+    )
+    $padSize = [math]::Max(0, ($width - $text.Length) / 2)
+    $paddedText = (" " * [math]::Floor($padSize)) + $text + (" " * [math]::Ceiling($padSize))
+    return $paddedText.Substring(0, [math]::Min($width, $paddedText.Length))
+}
+
 function Show-Menu {
-    Clear-Host
+    $width = 57
     while ($true) {
         $soundStatus = $global:settings.SoundStatus
-        $timings = $global:settings.Timings
-        $options = @(
-            "Click To Selected Timer",
-            "Change Timer Range ($timings)",
-            "Toggle Clicking Sounds ($soundStatus)",
-            "Quit/Exit Program"
-        )
-        $selectedIndex = 0
+        $timing = $global:settings.Timings
+        Clear-Host
+        Printed-TitleBar
+        Write-Host "`n`n`n`n`n"
+        Write-Host (Center-Text "1. Click To Selected Timer" $width)
+        Write-Host (Center-Text "2. Change Timer ($timing minutes)" $width)
+        Write-Host (Center-Text "3. Clicking Sounds ($soundStatus)" $width)
+        Write-Host "`n`n`n`n`n"
+        Write-Host ("---------------------------------------------------------")
+        
+        $choice = Read-Host -Prompt "Select; Options=1-3, Quit=Q"
 
-        try {
-            while ($true) {
+        switch ($choice) {
+            "1" { 
                 Clear-Host
-                Write-Host "=======================( AutoClix )======================"
-                Write-Host "`n`n`n`n`n`n`n"
-                for ($i = 0; $i -lt $options.Length; $i++) {
-                    $text = if ($i -eq $selectedIndex) { $options[$i] + " <-" } else { $options[$i] }
-                    $padding = " " * ((57 - $text.Length) / 2)
-                    Write-Host "${padding}$text"
-                }
-                Write-Host ""
-
-                $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-                switch ($key.VirtualKeyCode) {
-                    38 { if ($selectedIndex -gt 0) { $selectedIndex-- } } # Up arrow
-                    40 { if ($selectedIndex -lt $options.Length - 1) { $selectedIndex++ } }
-                    13 { 
-                        switch ($selectedIndex + 1) {
-                            1 { 
-                                $timingParts = $global:settings.Timings.Split(' ')
-                                if ($timingParts.Count -eq 2) {
-                                    Start-Timer -min ([int]$timingParts[0]) -max ([int]$timingParts[1])
-                                } else {
-                                    Write-Host "Invalid timing settings. Please update the timer range."
-                                }
-                            }
-                            2 { 
-                                $newTimings = Enter-Timings
-                                if ($newTimings) {
-                                    $global:settings.Timings = "$($newTimings[0]) $($newTimings[1])"
-                                    Save-Settings
-                                    Load-Settings
-
-                                    # Update the $timings variable to reflect the new timings
-                                    $timings = $global:settings.Timings
-                                    $options[1] = "Change Timer Range ($timings)"
-                                }
-                            }
-                            3 { 
-                                $soundStatus = Set-SoundToggle -currentStatus $soundStatus
-                                $global:settings.SoundStatus = $soundStatus
-                                Save-Settings
-                                Load-Settings
-
-                                # Update the $soundStatus variable to reflect the new status
-                                $options[2] = "Toggle Clicking Sounds ($soundStatus)"
-                            }
-                            4 { 
-                                Save-Settings
-                                exit 
-                            }
-                        }
-                    }
-                }
+				Printed-TitleBar
+				Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+                Start-Timer -min ([int]$timing) -max ([int]$timing)
             }
-        } catch {
-            $errorMessage = "An error occurred: $_"
-            Write-Host $errorMessage
-            Log-Error -message $errorMessage
-            Start-Sleep -Seconds 3
+            "2" { 
+                $newTiming = Enter-Timings
+                if ($newTiming) {
+                    $global:settings.Timings = $newTiming
+                }
+                Start-Sleep -Seconds 1
+            }
+            "3" { 
+                $soundStatus = Set-SoundToggle -currentStatus $soundStatus
+                $global:settings.SoundStatus = $soundStatus
+                Write-Host (Center-Text "Sound toggled to $soundStatus" $width)
+                Start-Sleep -Seconds 1
+            }
+            "Q" { 
+                Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+                exit 
+            }
+            default {
+                Write-Host (Center-Text "Invalid choice. Please enter a number between 1 and 3, or Q to quit." $width)
+                Start-Sleep -Seconds 2
+            }
         }
     }
 }
 
-
-
-
 # Entry Point
-Load-Settings
+$global:settings = Manage-PowerShellData1 -Path $settingsPath
 Ensure-Types
 Show-Menu
