@@ -72,7 +72,7 @@ Select; Options=1-3, Quit=Q:
 5. Exit program by inputting `Q` on main menu.
 
 ### NOTES
-- If you do use it for genetic backtesting in MetaTrader 5, then I suggest running 1 of the genetic backtests, then set the timer to "1.5-2 * Time_Taken". 
+- If you do use it for genetic backtesting in MetaTrader 5, then I suggest running 1 of the genetic backtests, then set the timer to "1.5-2 * Time_Taken", start the timer and click on start in MT5, make sure mouse is over button. 
 
 ## DISCLAIMER
 This software is subject to the terms in License.Txt, covering usage, distribution, and modifications. For full details on your rights and obligations, refer to License.Txt.
