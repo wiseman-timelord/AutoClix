@@ -66,13 +66,10 @@ Select; Options=1-3, Quit=Q:
 
 ### Usage
 1. Run the script by clicking "AutoClix.bat".
-2. Navigate through the menus using the arrow keys.
-3. Select Timer Options to configure.
-4. Select the desired clicking modes.
-5. Press the 'Esc' key to return to menu.
-6. Exit program from main menu.
-
-## Notes
+2. Select, Timer and Sound, options to preference.
+3. Select to start clicking.
+4. Press the 'Esc' key to return to menu.
+5. Exit program by inputting `Q` on main menu.
 
 ### DISCLAIMER
 This software is subject to the terms in License.Txt, covering usage, distribution, and modifications. For full details on your rights and obligations, refer to License.Txt.
