@@ -43,7 +43,9 @@ Select; Options=1-3, Quit=Q:
 ```
 
 =======================( AutoClix )======================
-                                                          Progress                                                    Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)     [                                             ]                                                               
+Progress
+Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)
+   [                                             ]                                                               
 
 
 
