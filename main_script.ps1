@@ -63,14 +63,14 @@ function Manage-PowerShellData1 {
                 $loadedData.SoundStatus = "On"
             }
             if (-not $loadedData.ContainsKey("Timings")) {
-                $loadedData.Timings = "1 3"
+                $loadedData.Timings = "1"
             }
 
             return $loadedData
         } else {
             return @{
                 SoundStatus = "On"
-                Timings = "1 3"
+                Timings = "1"
             }
         }
     } else {
@@ -92,22 +92,24 @@ function Set-SoundToggle {
 }
 
 function Enter-Timings {
-    $timing = Read-Host -Prompt "Enter a time in minutes (e.g., 5)"
+    $timing = Read-Host -Prompt "Enter a time in minutes (e.g., 5 or 5-7)"
     try {
         if ($timing -match '^\d+$') {
             $global:settings.Timings = $timing
-            Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
-            $global:settings = Manage-PowerShellData1 -Path $settingsPath
-            return $timing
+        } elseif ($timing -match '^\d+-\d+$') {
+            $global:settings.Timings = $timing
         } else {
-            Write-Host "Invalid input. Please enter a single number."
+            Write-Host "Invalid input. Please enter a single number or a range (e.g., 5 or 5-7)."
             return $null
         }
+        Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+        $global:settings = Manage-PowerShellData1 -Path $settingsPath
+        return $timing
     } catch {
         $errorMessage = "Failed to enter timing: $_"
         Write-Host $errorMessage
         Log-Error -message $errorMessage
-        Start-Sleep -Seconds 22
+        Start-Sleep -Seconds 2
         return $null
     }
 }
@@ -132,13 +134,18 @@ function ClickMouse {
 
 function Start-Timer {
     param (
-        [int]$min, 
+        [int]$min,
         [int]$max
     )
     Ensure-Types
 
-    $seconds = [int]$min * 60
     while ($true) {
+        if ($max -ne $min) {
+            $seconds = (Get-Random -Minimum $min -Maximum ($max + 1)) * 60
+        } else {
+            $seconds = $min * 60
+        }
+        
         $stopwatch = [system.diagnostics.stopwatch]::StartNew()
         while ($stopwatch.Elapsed.TotalSeconds -lt $seconds) {
             $progress = ($stopwatch.Elapsed.TotalSeconds / $seconds) * 100
@@ -153,15 +160,6 @@ function Start-Timer {
         }
         ClickMouse
     }
-}
-
-function Center-Text {
-    param (
-        [string]$text,
-        [int]$width
-    )
-    $padSize = [math]::Max(0, ($width - $text.Length) / 2)
-    return (" " * [math]::Floor($padSize)) + $text + (" " * [math]::Ceiling($padSize))
 }
 
 function Center-Text {
@@ -193,9 +191,17 @@ function Show-Menu {
         switch ($choice) {
             "1" { 
                 Clear-Host
-				Printed-TitleBar
-				Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
-                Start-Timer -min ([int]$timing) -max ([int]$timing)
+                Printed-TitleBar
+                Manage-PowerShellData1 -Path $settingsPath -Data $global:settings
+                if ($timing -match '^\d+$') {
+                    Start-Timer -min ([int]$timing) -max ([int]$timing)
+                } elseif ($timing -match '^\d+-\d+$') {
+                    $min, $max = $timing -split '-'
+                    Start-Timer -min ([int]$min) -max ([int]$max)
+                } else {
+                    Write-Host "Invalid timing format. Please set a valid timer."
+                    Start-Sleep -Seconds 2
+                }
             }
             "2" { 
                 $newTiming = Enter-Timings
