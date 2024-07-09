@@ -69,10 +69,9 @@ Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)
 ### USAGE
 1. Download latest "Release" version to suitable location, and unpack.
 2. Run the script by clicking "AutoClix.bat".
-3. Select, Timer and Sound, options to preference.
-4. Select to start clicking.
-5. Press the 'Esc' key to return to menu.
-6. Exit program by inputting `Q` on main menu.
+3. Select, Timer and Sound, options, ensure timer is appropriate for task.
+4. Select to start clicking, and when finished, then Press 'Esc' to return.
+5. Exit program by inputting `Q` on main menu.
 
 ### NOTES
 - If you do use it for genetic backtesting in MetaTrader 5, then I suggest running 1 of the genetic backtests, then set the timer to "1.5-2 * Time_Taken", start the timer and click on start in MT5, make sure mouse is over button. 
