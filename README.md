@@ -2,17 +2,17 @@
 
 ### DEVELOPMENT
 Status - Working. Its basic, the plans are...
-- Re-implement number ranges, for example 4-7 minutes.
 - set location on the screen, when started it will then click there and immediately return to the position the curser was in before the click, thus allowing the user to get on with things on a different monitor.
 
 ## DESCRIPTION
 AutoClix is a Powershell-based auto-clicker script designed to perform automated mouse clicks in different intervals. This is useful where you have an application requiring you to repeatingly click on a button, such as batch genetic backtesting in MetaTrader, or playing virtual games where something must be clicked. The user is then free to leave the computer, and do the chors/gardening, and return to the computer, as if someone has patiently clicked for you. 
 
 ### FEATURES
-1. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
-2. **Sound Notifications:** Toggleable sound notifications for clicks using provided sound.
-3. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
-4. **Windows Compatibility:** Designed specifically for Windows users.
+1. **Advanced Timers:** Select single number or Random within Range, for detection avoidance.
+2. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
+3. **Sound Notifications:** Toggleable sound notifications for clicks using provided sound.
+4. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
+5. **Windows Compatibility:** Designed specifically for Windows users.
 
 ### PREVIEW
 - The Main Menu...
