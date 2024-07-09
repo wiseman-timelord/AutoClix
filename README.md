@@ -1,7 +1,7 @@
 # AutoClix
 
 ### DEVELOPMENT
-Status - Working. Its basic, the plans are...
+Its Working, but its basic. The plans are...
 - set location on the screen, when started it will then click there and immediately return to the position the curser was in before the click, thus allowing the user to get on with things on a different monitor.
 
 ## DESCRIPTION
@@ -65,11 +65,12 @@ Select; Options=1-3, Quit=Q:
 - PowerShellCore =>7
 
 ### USAGE
-1. Run the script by clicking "AutoClix.bat".
-2. Select, Timer and Sound, options to preference.
-3. Select to start clicking.
-4. Press the 'Esc' key to return to menu.
-5. Exit program by inputting `Q` on main menu.
+1. Download latest "Release" version to suitable location, and unpack.
+2. Run the script by clicking "AutoClix.bat".
+3. Select, Timer and Sound, options to preference.
+4. Select to start clicking.
+5. Press the 'Esc' key to return to menu.
+6. Exit program by inputting `Q` on main menu.
 
 ### NOTES
 - If you do use it for genetic backtesting in MetaTrader 5, then I suggest running 1 of the genetic backtests, then set the timer to "1.5-2 * Time_Taken", start the timer and click on start in MT5, make sure mouse is over button. 
