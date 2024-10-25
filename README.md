@@ -72,7 +72,7 @@ Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)
 5. Exit program by inputting `Q` on main menu.
 
 ### USAGE (Linux)
-1. Ensure you have PowerShell Core v7.x installed.
+1. Ensure you have PowerShell [Core v7.x](https://github.com/wiseman-timelord/LinuxPsc-Install) installed.
 2. Download latest "Release" version to suitable location, and unpack.
 2. Run the script by clicking "AutoClix.sh".
 3. Select, Timer and Sound, options, ensure timer is appropriate for task.
