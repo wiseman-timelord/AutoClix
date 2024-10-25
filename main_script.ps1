@@ -4,6 +4,9 @@ $errorLogPath = Join-Path $PSScriptRoot ".\data\issues.log"
 $settingsPath = Join-Path $PSScriptRoot ".\data\settings.psd1"
 $global:settings = @{}
 
+# Determine OS platform
+$global:isWindows = $PSVersionTable.Platform -eq $null -or $PSVersionTable.Platform -eq "Win32NT"
+$global:isLinux = $PSVersionTable.Platform -eq "Unix"
 
 function Printed-TitleBar {
     Write-Host ("`n=======================( AutoClix )======================`n")
@@ -20,8 +23,9 @@ function Log-Error {
 function Ensure-Types {
     Write-Host "Ensuring custom types are loaded..."
     try {
-        if (-not ([type]::GetType("MouseClick"))) {
-            Add-Type -TypeDefinition @"
+        if ($global:isWindows) {
+            if (-not ([type]::GetType("MouseClick"))) {
+                Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -35,6 +39,14 @@ public class MouseClick {
     }
 }
 "@
+            }
+        }
+        elseif ($global:isLinux) {
+            # Check for xdotool on Linux
+            $xdotoolCheck = Get-Command "xdotool" -ErrorAction SilentlyContinue
+            if (-not $xdotoolCheck) {
+                throw "xdotool is not installed. Please install it using: sudo apt-get install xdotool"
+            }
         }
     } catch {
         $errorMessage = "Failed to load custom types: $_"
@@ -114,17 +126,47 @@ function Enter-Timings {
     }
 }
 
-function ClickMouse {
-    Ensure-Types
-
-    # Access the global settings directly
+function Play-Sound {
     if ($global:settings.SoundStatus -eq "On") {
-        (New-Object Media.SoundPlayer $clickSoundPath).Play()
+        try {
+            if ($global:isWindows) {
+                (New-Object Media.SoundPlayer $clickSoundPath).Play()
+            }
+            elseif ($global:isLinux) {
+                # Use paplay for Linux audio
+                $paplayCheck = Get-Command "paplay" -ErrorAction SilentlyContinue
+                if ($paplayCheck) {
+                    Start-Process "paplay" -ArgumentList $clickSoundPath -NoNewWindow
+                }
+                else {
+                    Write-Host "Warning: paplay not found. Install pulseaudio-utils for sound support"
+                }
+            }
+        }
+        catch {
+            $errorMessage = "Failed to play sound: $_"
+            Log-Error -message $errorMessage
+        }
     }
+}
 
+function ClickMouse {
     try {
-        [MouseClick]::Click()
-    } catch {
+        if ($global:isWindows) {
+            Ensure-Types
+            [MouseClick]::Click()
+        }
+        elseif ($global:isLinux) {
+            # Use xdotool for Linux
+            $result = Start-Process "xdotool" -ArgumentList "click 1" -Wait -NoNewWindow -PassThru
+            if ($result.ExitCode -ne 0) {
+                throw "Failed to execute xdotool click command"
+            }
+        }
+        
+        Play-Sound
+    }
+    catch {
         $errorMessage = "Failed to click mouse: $_"
         Write-Host $errorMessage
         Log-Error -message $errorMessage
@@ -137,8 +179,7 @@ function Start-Timer {
         [int]$min,
         [int]$max
     )
-    Ensure-Types
-
+    
     while ($true) {
         if ($max -ne $min) {
             $seconds = (Get-Random -Minimum $min -Maximum ($max + 1)) * 60
@@ -229,6 +270,25 @@ function Show-Menu {
 }
 
 # Entry Point
+Write-Host "Running AutoClix on: $($global:isWindows ? 'Windows' : 'Linux')"
 $global:settings = Manage-PowerShellData1 -Path $settingsPath
+
+if ($global:isLinux) {
+    # Check for required Linux dependencies
+    $missing = @()
+    if (-not (Get-Command "xdotool" -ErrorAction SilentlyContinue)) {
+        $missing += "xdotool"
+    }
+    if (-not (Get-Command "paplay" -ErrorAction SilentlyContinue)) {
+        $missing += "pulseaudio-utils (for sound support)"
+    }
+    
+    if ($missing.Count -gt 0) {
+        Write-Host "`nMissing required Linux packages: $($missing -join ', ')"
+        Write-Host "Please install them using:"
+        Write-Host "sudo apt-get install $($missing -join ' ')`n"
+    }
+}
+
 Ensure-Types
 Show-Menu
