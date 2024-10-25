@@ -9,7 +9,7 @@ AutoClix is a Powershell-based auto-clicker script designed to perform automated
 2. **Progress Tracking:** A progress bar in the terminal shows the time left until the next click.
 3. **Sound Notifications:** Toggleable sound notifications for clicks using provided sound.
 4. **Configuration Persistence:** Timer range and sound settings are saved in a 'settings.cfg' file for future use.
-5. **Windows Compatibility:** Designed specifically for Windows users.
+5. **Windows/Linux Compatibility:** Originally designed for Windows, later updated for Linux.
 
 ### PREVIEW
 - The Main Menu...
@@ -60,12 +60,21 @@ Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)
 
 ## REQUIREMENTS
 
-- Windows 7-11
+- Windows 7-11 / Linux v?
 - PowerShellCore =>7
 
-### USAGE
+### USAGE (Windows)
+1. Ensure you have PowerShell Core v7.x installed.
 1. Download latest "Release" version to suitable location, and unpack.
 2. Run the script by clicking "AutoClix.bat".
+3. Select, Timer and Sound, options, ensure timer is appropriate for task.
+4. Select to start clicking, and when finished, then Press 'Esc' to return.
+5. Exit program by inputting `Q` on main menu.
+
+### USAGE (Linux)
+1. Ensure you have PowerShell Core v7.x installed.
+2. Download latest "Release" version to suitable location, and unpack.
+2. Run the script by clicking "AutoClix.sh".
 3. Select, Timer and Sound, options, ensure timer is appropriate for task.
 4. Select to start clicking, and when finished, then Press 'Esc' to return.
 5. Exit program by inputting `Q` on main menu.
