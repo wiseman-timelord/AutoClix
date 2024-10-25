@@ -63,7 +63,7 @@ Elapsed: 00:03 / Remaining: 06:56 (Esc key for Menu)
 
 ## REQUIREMENTS
 
-- Windows 7-11 preferably with the 5.1 
+- Windows 7-11
 - PowerShellCore =>7
 
 ### USAGE
